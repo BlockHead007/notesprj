@@ -1,1 +1,1 @@
-Program for creating notes. TUSUR Project
+# proj-repo

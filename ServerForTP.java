@@ -25,21 +25,12 @@ public class ServerForTP {
                     }
                 }
 
-                // если комманд от сервера нет то становимся в ожидание
-                // подключения к сокету общения под именем - "clientDialog" на
-                // серверной стороне
                 Socket client = server.accept();
 
-                // после получения запроса на подключение сервер создаёт сокет
-                // для общения с клиентом и отправляет его в отдельную нить
-                // в Runnable(при необходимости можно создать Callable)
-                // монопоточную нить = сервер - MonoThreadClientHandler и тот
-                // продолжает общение от лица сервера
                 executeIt.execute(new MonoThreadClientHandler(client));
                 System.out.print("Connection accepted.");
             }
 
-            // закрытие пула нитей после завершения работы всех нитей
             executeIt.shutdown();
         } catch (IOException e) {
             e.printStackTrace();

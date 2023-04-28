@@ -25,7 +25,7 @@ public class MonoThreadClientHandler implements Runnable {
             System.out.println("DataInputStream created\nDataOutputStream created");
             conn = DriverManager.getConnection(url, username, password);
             statement = conn.createStatement();
-            System.out.println("Conn sex");
+            System.out.println("Connected to DB");
 
             while (!clientDialog.isClosed()) {
                 System.out.println("Server reading from channel");

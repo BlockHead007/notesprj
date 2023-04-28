@@ -40,11 +40,19 @@ public class MonoThreadClientHandler implements Runnable {
                     Thread.sleep(3000);
                     break;
                 }
-
+                
+                
+                
+                
+                //Example code
                 if (entry.equalsIgnoreCase("Search")){
                     String SQLcommand = "";
+                    //statement.executeUpdate(SQLcommand);
                 }
 
+                
+                
+                
                 System.out.println("Server try writing to channel");
                 out.writeUTF("Server reply - " + entry + " - OK");
                 System.out.println("Server Wrote message to clientDialog.");

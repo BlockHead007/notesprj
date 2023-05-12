@@ -1,8 +1,10 @@
+package server;
+
 import java.io.*;
 import java.net.Socket;
 import java.sql.*;
 
-public class MonoThreadClientHandler implements Runnable {
+public class dbconnector implements Runnable {
     private static final String url = "jdbc:mysql://26.230.233.234:3306/tp_database";
     private static final String username = "tpdb";
     private static final String password = "421-1Best";
@@ -11,8 +13,8 @@ public class MonoThreadClientHandler implements Runnable {
 
     private static Socket clientDialog;
 
-    public MonoThreadClientHandler(Socket client) {
-        MonoThreadClientHandler.clientDialog = client;
+    public dbconnector(Socket client) {
+        dbconnector.clientDialog = client;
     }
 
     @Override

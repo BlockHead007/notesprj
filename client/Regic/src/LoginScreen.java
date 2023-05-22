@@ -1,3 +1,4 @@
+package client.Regic.src;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -57,6 +58,7 @@ public class LoginScreen extends JFrame {
         frame.getContentPane().add(panel);
         frame.setSize(400, 300);
         frame.setVisible(true);
+        frame.setResizable(false);
     }
 
     private void login() {

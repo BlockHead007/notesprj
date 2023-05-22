@@ -1,4 +1,6 @@
+package client.Regic.src;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,17 +20,25 @@ public class LoginScreen extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 2, 10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panel.setLayout(new GridBagLayout());
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(5, 5, 5, 5);
 
         usernameLabel = new JLabel("Логин:");
         usernameField = new JTextField();
+        usernameLabel.setHorizontalAlignment(JLabel.CENTER);
+        usernameField.setPreferredSize(new Dimension(200, 30));
 
         passwordLabel = new JLabel("Пароль:");
         passwordField = new JPasswordField();
+        passwordLabel.setHorizontalAlignment(JLabel.CENTER);
+        passwordField.setPreferredSize(new Dimension(200, 30));
 
         loginButton = new JButton("Вход");
         loginButton.setBackground(Color.GREEN);
+        loginButton.setPreferredSize(new Dimension(200, 30));
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -36,8 +46,9 @@ public class LoginScreen extends JFrame {
             }
         });
 
-        registrationButton = new JButton("Нет аккаунта? Зарегистрируйтесь.");
+        registrationButton = new JButton("Регистрация");
         registrationButton.setBackground(Color.GREEN);
+        registrationButton.setPreferredSize(new Dimension(200, 30));
         registrationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -45,18 +56,55 @@ public class LoginScreen extends JFrame {
             }
         });
 
-        panel.add(usernameLabel);
-        panel.add(usernameField);
-        panel.add(passwordLabel);
-        panel.add(passwordField);
-        panel.add(new JLabel());
-        panel.add(new JLabel());
-        panel.add(loginButton);
-        panel.add(registrationButton);
+        int borderRadius = 10;
+        Border roundedBorder = new RoundedBorder(borderRadius);
+        Border compoundBorder = BorderFactory.createCompoundBorder(roundedBorder, BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-        frame.getContentPane().add(panel);
+        usernameField.setBorder(compoundBorder);
+        passwordField.setBorder(compoundBorder);
+        loginButton.setBorder(compoundBorder);
+        registrationButton.setBorder(compoundBorder);
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        panel.add(usernameLabel, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        panel.add(usernameField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        panel.add(passwordLabel, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        panel.add(passwordField, constraints);
+
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new GridLayout(3, 1, 5, 5)); // Changed to 3 rows
+        buttonsPanel.add(loginButton);
+        
+        // Add the additional text label
+        JLabel registerLabel = new JLabel("Нет аккаунта? Зарегистрируйтесь");
+        registerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        buttonsPanel.add(registerLabel);
+
+        buttonsPanel.add(registrationButton);
+
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        panel.add(buttonsPanel, constraints);
+
+        JPanel containerPanel = new JPanel();
+        containerPanel.setLayout(new BorderLayout());
+        containerPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        containerPanel.add(panel, BorderLayout.NORTH);
+
+        frame.getContentPane().add(containerPanel);
         frame.setSize(400, 300);
         frame.setVisible(true);
+        frame.setResizable(false);
     }
 
     private void login() {
@@ -68,8 +116,8 @@ public class LoginScreen extends JFrame {
     }
 
     private void openRegistrationScreen() {
-        frame.dispose();  
-        RegistrationScreen registrationScreen = new RegistrationScreen(); 
+        frame.dispose();
+        RegistrationScreen registrationScreen = new RegistrationScreen();
     }
 
     public static void main(String[] args) {
@@ -81,4 +129,3 @@ public class LoginScreen extends JFrame {
         });
     }
 }
-

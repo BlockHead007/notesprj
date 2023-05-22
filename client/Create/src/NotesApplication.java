@@ -1,3 +1,4 @@
+package client.Create.src;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -95,6 +96,7 @@ public class NotesApplication {
 
         frame.setSize(800, 600);
         frame.setVisible(true);
+        frame.setResizable(false);
         createNoteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showCreateNotePanel();

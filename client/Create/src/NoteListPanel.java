@@ -1,3 +1,4 @@
+package client.Create.src;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -85,6 +86,7 @@ public class NoteListPanel extends JPanel {
                 frame.getContentPane().add(noteListPanel);
                 frame.setSize(800, 600);
                 frame.setVisible(true);
+                frame.setResizable(false);
             }
         });
     }

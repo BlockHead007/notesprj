@@ -1,3 +1,4 @@
+package client.Create.src;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -66,6 +67,11 @@ public class NoteListPanel extends JPanel {
         }
     }
 
+    public JList<String> getNoteList() {
+        return noteList;
+    }
+    
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -78,8 +84,9 @@ public class NoteListPanel extends JPanel {
                 noteListPanel.addNoteToList("Заметка 3");
 
                 frame.getContentPane().add(noteListPanel);
-                frame.setSize(400, 300);
+                frame.setSize(800, 600);
                 frame.setVisible(true);
+                frame.setResizable(false);
             }
         });
     }

@@ -1,3 +1,4 @@
+package client.Regic.src;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -71,6 +72,7 @@ public class RegistrationScreen {
         frame.getContentPane().add(panel);
         frame.setSize(400, 300);
         frame.setVisible(true);
+        frame.setResizable(false);
     }
 
     private void register() {
@@ -88,7 +90,8 @@ public class RegistrationScreen {
     private void showLoginScreen() {
         frame.dispose(); 
         LoginScreen loginScreen = new LoginScreen();  
-        loginScreen.show();  
+        loginScreen.show();
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {

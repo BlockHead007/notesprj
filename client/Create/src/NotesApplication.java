@@ -1,7 +1,10 @@
+package client.Create.src;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class NotesApplication {
     private JFrame frame;
@@ -27,12 +30,12 @@ public class NotesApplication {
         sidePanel.setBackground(Color.BLACK);
         sidePanel.setPreferredSize(new Dimension(150, frame.getHeight()));
 
-        // компоненты боковой панели и их кнопки
+        //компоненты боковой панели и их кнопки
         createNoteButton = new JButton("Создать новую заметку");
         noteListButton = new JButton("Список заметок");
         accountButton = new JButton("Аккаунт");
 
-        // компоненты боковой панели
+        //компоненты боковой панели
         createNoteButton.setForeground(Color.WHITE);
         accountButton.setForeground(Color.WHITE);
         noteListButton.setForeground(Color.WHITE);
@@ -93,6 +96,7 @@ public class NotesApplication {
 
         frame.setSize(800, 600);
         frame.setVisible(true);
+        frame.setResizable(false);
         createNoteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showCreateNotePanel();
@@ -119,6 +123,15 @@ public class NotesApplication {
         noteListPanel.addNoteToList("Заметка 2");
         noteListPanel.addNoteToList("Заметка 3");
 
+        noteListPanel.getNoteList().addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    showCreateNotePanel();
+                }
+            }
+        });
+        
+
         frame.getContentPane().removeAll();
         frame.getContentPane().add(sidePanel, BorderLayout.WEST);
         frame.getContentPane().add(noteListPanel, BorderLayout.CENTER);
@@ -133,8 +146,8 @@ public class NotesApplication {
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String noteText = createNotePanel.getNoteText();
-                noteListPanel.addNoteToList(noteText); // Добавить новую заметку в список
-                showNoteListPanel(); // Вернуться на первую страницу с заметками
+                noteListPanel.addNoteToList(noteText); 
+                showNoteListPanel(); 
             }
         });
 

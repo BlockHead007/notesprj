@@ -145,8 +145,14 @@ public class RegistrationScreen {
     }
 
     private void showLoginScreen() {
+
         frame.dispose();
         LoginScreen loginScreen = new LoginScreen();
+
+        frame.dispose(); 
+        LoginScreen loginScreen = new LoginScreen();  
+        loginScreen.show();
+
     }
 
     public static void main(String[] args) {

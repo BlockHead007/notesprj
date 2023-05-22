@@ -1,8 +1,13 @@
 package server;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class dbconnector implements Runnable {
     private static final String url = "jdbc:mysql://26.230.233.234:3306/tp_database";

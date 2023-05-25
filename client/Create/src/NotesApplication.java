@@ -1,5 +1,5 @@
-package client.Create.src;
-import javax.swing.*;
+    package client.Create.src;
+    import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,17 +25,17 @@ public class NotesApplication {
         frame = new JFrame("Заметки");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //боковая панель
+        // Боковая панель
         sidePanel = new JPanel();
         sidePanel.setBackground(Color.BLACK);
         sidePanel.setPreferredSize(new Dimension(150, frame.getHeight()));
 
-        //компоненты боковой панели и их кнопки
+        // Компоненты боковой панели и их кнопки
         createNoteButton = new JButton("Создать новую заметку");
         noteListButton = new JButton("Список заметок");
         accountButton = new JButton("Аккаунт");
 
-        //компоненты боковой панели
+        // Компоненты боковой панели
         createNoteButton.setForeground(Color.WHITE);
         accountButton.setForeground(Color.WHITE);
         noteListButton.setForeground(Color.WHITE);
@@ -67,7 +67,7 @@ public class NotesApplication {
         notesTextArea = new JTextArea();
         fontSizeComboBox = new JComboBox<>(new String[]{"12", "14", "16"});
         fontComboBox = new JComboBox<>(new String[]{"Arial", "Times New Roman", "Courier New"});
-        saveButton = new JButton("Сохранить заметку");
+        saveButton = new JButton("Сохранить");
 
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         notesTextArea.setBackground(Color.LIGHT_GRAY);
@@ -78,25 +78,48 @@ public class NotesApplication {
             }
         });
 
+        JPanel optionsPanel = new JPanel(new BorderLayout());
+        JPanel topOptionsPanel = new JPanel();
+        topOptionsPanel.setLayout(new BoxLayout(topOptionsPanel, BoxLayout.LINE_AXIS));
+
+        topOptionsPanel.add(Box.createRigidArea(new Dimension(10, 0)));  // Add some spacing
+        topOptionsPanel.add(new JLabel("Размер текста:"));
+        topOptionsPanel.add(fontSizeComboBox);
+        topOptionsPanel.add(Box.createRigidArea(new Dimension(10, 0)));  // Add some spacing
+        topOptionsPanel.add(new JLabel("Шрифт:"));
+        topOptionsPanel.add(fontComboBox);
+        topOptionsPanel.add(Box.createHorizontalGlue());  // Push components to the right
+
+        optionsPanel.add(topOptionsPanel, BorderLayout.NORTH);
+
+        notesTextArea.setBackground(Color.LIGHT_GRAY);
+        notesTextArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));  // Add some padding
+
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(titleLabel, BorderLayout.NORTH);
-        mainPanel.add(new JScrollPane(notesTextArea), BorderLayout.CENTER);
+        mainPanel.add(optionsPanel, BorderLayout.NORTH);
+        mainPanel.add(notesTextArea, BorderLayout.CENTER);
 
-        JPanel optionsPanel = new JPanel();
-        optionsPanel.add(new JLabel("Размер текста:"));
-        optionsPanel.add(fontSizeComboBox);
-        optionsPanel.add(new JLabel("Шрифт:"));
-        optionsPanel.add(fontComboBox);
-        optionsPanel.add(saveButton);
+        saveButton.setPreferredSize(new Dimension(150, 30));
+        saveButton.setBackground(Color.GREEN);
+        saveButton.setForeground(Color.BLACK);
+        saveButton.setFocusPainted(false);
+        saveButton.setOpaque(true);
+        saveButton.setUI(new RoundedCornerButtonUI(30, 30));
 
-        mainPanel.add(optionsPanel, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.add(saveButton);
+
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         frame.getContentPane().add(sidePanel, BorderLayout.WEST);
+        frame.getContentPane().add(titleLabel, BorderLayout.NORTH);
         frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
 
         frame.setSize(800, 600);
         frame.setVisible(true);
         frame.setResizable(false);
+
         createNoteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 showCreateNotePanel();
@@ -119,9 +142,9 @@ public class NotesApplication {
 
     private void showNoteListPanel() {
         noteListPanel = new NoteListPanel();
-        noteListPanel.addNoteToList("Заметка 1");
-        noteListPanel.addNoteToList("Заметка 2");
-        noteListPanel.addNoteToList("Заметка 3");
+        noteListPanel.addNoteToList("Первая заметка");
+        noteListPanel.addNoteToList("Вторая заметка");
+        noteListPanel.addNoteToList("Третья заметка");
 
         noteListPanel.getNoteList().addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -130,7 +153,6 @@ public class NotesApplication {
                 }
             }
         });
-        
 
         frame.getContentPane().removeAll();
         frame.getContentPane().add(sidePanel, BorderLayout.WEST);
@@ -146,8 +168,8 @@ public class NotesApplication {
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String noteText = createNotePanel.getNoteText();
-                noteListPanel.addNoteToList(noteText); 
-                showNoteListPanel(); 
+                noteListPanel.addNoteToList(noteText);
+                showNoteListPanel();
             }
         });
 
@@ -166,4 +188,3 @@ public class NotesApplication {
         });
     }
 }
-

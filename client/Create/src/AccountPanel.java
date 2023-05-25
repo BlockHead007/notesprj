@@ -7,24 +7,49 @@ import java.awt.event.ActionListener;
 public class AccountPanel extends JPanel {
     public AccountPanel() {
         setLayout(new BorderLayout());
-        JLabel titleLabel = new JLabel("Настройки аккаунта");
+        JLabel titleLabel = new JLabel("Аккаунт");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         add(titleLabel, BorderLayout.NORTH);
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(4, 1, 0, 10)); //
+        buttonPanel.setLayout(new GridBagLayout());
+        buttonPanel.setBackground(Color.LIGHT_GRAY);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.insets = new Insets(10, 10, 10, 10);
 
         JButton changeUsernameButton = new JButton("Изменить имя пользователя");
+        changeUsernameButton.setBorder(new RoundedBorder(10, Color.BLACK));
         JButton changePasswordButton = new JButton("Изменить пароль");
+        changePasswordButton.setBorder(new RoundedBorder(10,Color.BLACK));
         JButton deleteAccountButton = new JButton("Удалить аккаунт");
+        deleteAccountButton.setBorder(new RoundedBorder(10,Color.BLACK));
         JButton logoutButton = new JButton("Выйти из аккаунта");
+        logoutButton.setBorder(new RoundedBorder(10,Color.BLACK));
 
-        buttonPanel.add(changeUsernameButton);
-        buttonPanel.add(changePasswordButton);
-        buttonPanel.add(deleteAccountButton);
-        buttonPanel.add(logoutButton);
+        changeUsernameButton.setBackground(Color.GREEN);
+        changePasswordButton.setBackground(Color.GREEN);
+        deleteAccountButton.setBackground(Color.GREEN);
+        logoutButton.setBackground(Color.GREEN);
+
+        // Установка размера кнопок
+        Dimension buttonSize = new Dimension(300, 30);
+        changeUsernameButton.setPreferredSize(buttonSize);
+        changePasswordButton.setPreferredSize(buttonSize);
+        deleteAccountButton.setPreferredSize(buttonSize);
+        logoutButton.setPreferredSize(buttonSize);
+
+        buttonPanel.add(changeUsernameButton, gbc);
+        buttonPanel.add(changePasswordButton, gbc);
+        buttonPanel.add(deleteAccountButton, gbc);
+        buttonPanel.add(logoutButton, gbc);
 
         add(buttonPanel, BorderLayout.CENTER);
+
+        // Добавьте обработчики событий для кнопок здесь
+
+        // ...
 
         changeUsernameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

@@ -1,31 +1,23 @@
 package server;
-
 import java.io.*;
 import java.net.*;
 import java.util.ArrayDeque;
-import java.util.concurrent.*;
 import server.Dbcommands;
 import server.Dbconnector;
 
-/*class dbconnect{
-    public Statement statement;
-}*/
-
-
-
 public class Mainserver {
-    static ExecutorService executeIt = Executors.newFixedThreadPool(4);
+    //static ExecutorService executeIt = Executors.newFixedThreadPool(4);
 
     public static void main(String[] args) {
         Dbconnector dbconnector = new Dbconnector();
         dbconnector.run();
-        try (ServerSocket server = new ServerSocket(3128, 0, InetAddress.getByName("127.0.0.1")))
+        try (ServerSocket server = new ServerSocket(3128, 0, InetAddress.getByName("192.168.0.136")))
             {
             System.out.println("Server socket created, command console reader for listen to server commands");
             int state;
             boolean bstate;
             Socket client = server.accept();
-            System.out.println("Client connected.");
+            System.out.println("Client connected\n");
             ObjectInputStream objectInput = new ObjectInputStream(client.getInputStream());
             ObjectOutputStream objectOutput = new ObjectOutputStream(client.getOutputStream());
                 ArrayDeque<String> list = new ArrayDeque<String>();
@@ -43,13 +35,14 @@ public class Mainserver {
                 }
                 switch (serverCommand){
                     case "regs": // account registration
+                        System.out.println("Recognized command: regs\n Recognized username: " + splitted[1] + "\nRecognized password: " + splitted[2] + "\nRecognized Email: " + splitted[3]);
                         state = Dbcommands.Registration(dbconnector.statement, splitted[1], splitted[2], splitted[3]);
                         objectOutput.writeObject(state);
                         break;
                     case "gets": // account login and get session
                         //String dbmsgsend = splitted[1] + ":" + splitted[2];
-                        bstate = Dbcommands.Login(dbconnector.statement, splitted[1], splitted[2]);
-                        objectOutput.writeObject(bstate);
+                        state = Dbcommands.Login(dbconnector.statement, splitted[1], splitted[2]);
+                        objectOutput.writeObject(state);
                         break;
                     case "getd": // get data
                         state = Dbcommands.Search(dbconnector.statement, Integer.parseInt(splitted[1]), list);
@@ -71,7 +64,7 @@ public class Mainserver {
                         state = Dbcommands.Upload(dbconnector.statement, Integer.parseInt(splitted[1]), splitted[2], splitted[3]);
                         objectOutput.writeObject(state);
                         break;
-                    case "svnt":
+                    case "svnt": // save note
                         state = Dbcommands.UpdateNote(dbconnector.statement, Integer.parseInt(splitted[1]), splitted[2]);
                         objectOutput.writeObject(state);
                         break;
@@ -82,16 +75,10 @@ public class Mainserver {
                 }
 
             }
-
-
-                //executeIt.execute(new Dbconnector());
-                //System.out.print("Connection accepted.");
-            } catch (IOException ex) {
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-        executeIt.shutdown();
-        }
     }
+}

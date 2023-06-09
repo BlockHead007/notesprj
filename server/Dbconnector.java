@@ -24,8 +24,8 @@ public class Dbconnector implements Runnable{
 
         try {
 
-            DataInputStream in = new DataInputStream(clientDialog.getInputStream());
-            DataOutputStream out = new DataOutputStream(clientDialog.getOutputStream());
+            //DataInputStream in = new DataInputStream(clientDialog.getInputStream());
+            //DataOutputStream out = new DataOutputStream(clientDialog.getOutputStream());
             //System.out.println("DataInputStream created\nDataOutputStream created");
             conn = DriverManager.getConnection(url, username, password);
             statement = conn.createStatement();
@@ -74,8 +74,6 @@ public class Dbconnector implements Runnable{
             clientDialog.close();
 
             System.out.println("Closing connections & channels - DONE.");*/
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (SQLException trowables){
             trowables.printStackTrace();
             throw new RuntimeException();

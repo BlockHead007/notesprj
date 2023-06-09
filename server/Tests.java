@@ -8,8 +8,8 @@ import java.util.Scanner;
 
 public class Tests {
     public static void main(String[] args) {
-        String serverAddress = "127.0.0.1";
-        int serverPort = 3128;
+        String serverAddress = "88.204.64.47";
+        int serverPort = 20000;
 
         try (Socket socket = new Socket(serverAddress, serverPort)) {
             // Получение потоков для чтения/записи объектов
@@ -19,10 +19,10 @@ public class Tests {
             Object receivedObject;
             Object receivedObject2;
             Scanner in = new Scanner(System.in);
-            int num = in.nextInt();
-            // Отправка объекта серверу
+            //int id; // should be used in gui program
             while (serverCommand != "quit"){
-                message = in.toString();
+                message = in.nextLine();
+                System.out.println("entered line: " + message);
                 String[] splitted = message.split("~");
                 serverCommand = splitted[0];
                 switch (serverCommand){

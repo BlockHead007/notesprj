@@ -93,24 +93,31 @@ public class Dbcommands {
         }
     }
 //tested-work
-    public static boolean Login(Statement statement, String Login, String Password) {
+    public static Integer Login(Statement statement, String Login, String Password) {
         try {
-            int id;
-            boolean Proof = false;
+            boolean Proof = false;int ID = -1;
             String SQLcommand = "SELECT * FROM tp_database.account_list WHERE (username='" + Login
                     + "' AND password='" + Password + "');";
             Proof = statement.execute(SQLcommand);
+            if (Proof == true) {
+                ResultSet resultSet = statement.executeQuery(SQLcommand);
+                while(resultSet.next()) ID = resultSet.getInt(1);
+            }
             if (Proof == false) {
                 SQLcommand = "SELECT * FROM tp_database.account_list WHERE (mail='" + Login
                         + "' AND password='" + Password + "');";
                 Proof = statement.execute(SQLcommand);
+                if (Proof == true) {
+                    ResultSet resultSet = statement.executeQuery(SQLcommand);
+                    while(resultSet.next()) ID = resultSet.getInt(1);
+                }
             }
-            return Proof;
+            return ID;
         } catch (Exception ex) {
             System.out.println("Connection failed...");
 
             System.out.println(ex);
-            return false;
+            return -1;
         }
     }
 //tested-work

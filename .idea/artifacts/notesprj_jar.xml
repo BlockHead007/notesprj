@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="notesprj:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/notesprj_jar</output-path>
+    <root id="archive" name="notesprj.jar">
+      <element id="module-output" name="notesprj" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/server/mysql-connector-j-8.0.32.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

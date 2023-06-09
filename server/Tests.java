@@ -1,57 +1,76 @@
 package server;
-import server.dbcommands;
 
-import java.sql.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.Scanner;
 
 public class Tests {
-
-    private static final String url = "jdbc:mysql://26.230.233.234:3306/tp_database";
-    private static final String username = "tpdb";
-    private static final String password = "421-1Best";
-    public static Connection conn;
-    public static Statement statement;
-
     public static void main(String[] args) {
-        try {
-            conn = DriverManager.getConnection(url, username, password);
-            statement = conn.createStatement();
-            System.out.println("Conn sex");
+        String serverAddress = "127.0.0.1";
+        int serverPort = 3128;
 
-            //ArrayDeque<String> tempSTR = new ArrayDeque<String>();
-
-            //int act = SQLforTP.Registration(statement, "Temp1", "Temp1", "Temp1@notesprj.ru");
-            //SQLforTP.Upload(statement, 3, "MyMail", "MySomeText");
-            /*SQLforTP.Search(statement,3, tempSTR);
-
-            while(tempSTR.peek()!=null){
-                String ID=tempSTR.pop();
-                String Name=tempSTR.pop();
-                String Data=tempSTR.pop();
-
-                System.out.println(ID + "::" + Name + ":" + Data);
-            }*/
-
-            //SQLforTP.Delete(statement, 2, 2);
-                boolean proofe = dbcommands.Login(statement, "Temp1", "Temp1");
-            System.out.println(proofe);
-
-            int SQLcommandSupport = 1;
-            String SQLcommand = "SELECT * FROM tp_database.notes_link";
-            ResultSet result = statement.executeQuery(SQLcommand);
-            while(result.next()){
-                int id = result.getInt(1);
-                int id1 = result.getInt(2);
-                System.out.printf("%d - %d\n", id, id1);
-                //String name = result.getString(2);
-                //String data = result.getString(3);
-                //String mail = result.getString(4);
-                //System.out.printf("%d. %s: %s\n", id, name, data);
+        try (Socket socket = new Socket(serverAddress, serverPort)) {
+            // Получение потоков для чтения/записи объектов
+            ObjectOutputStream objectOutput = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream objectInput = new ObjectInputStream(socket.getInputStream());
+            String message, serverCommand = "";
+            Object receivedObject;
+            Object receivedObject2;
+            Scanner in = new Scanner(System.in);
+            int num = in.nextInt();
+            // Отправка объекта серверу
+            while (serverCommand != "quit"){
+                message = in.toString();
+                String[] splitted = message.split("~");
+                serverCommand = splitted[0];
+                switch (serverCommand){
+                    case "regs": // account registration
+                        objectOutput.writeObject(message);
+                        receivedObject = objectInput.readObject();
+                        System.out.println("Server response: " + receivedObject);
+                        break;
+                    case "gets": // account login and get session
+                        objectOutput.writeObject(message);
+                        receivedObject = objectInput.readObject();
+                        System.out.println("Server response: " + receivedObject);
+                        break;
+                    case "getd": // get data
+                        objectOutput.writeObject(message);
+                        receivedObject = objectInput.readObject();
+                        receivedObject2 = objectInput.readObject();
+                        System.out.println("Server response: " + receivedObject + "\n" + receivedObject2);
+                        break;
+                    case "chan": // change account name
+                        objectOutput.writeObject(message);
+                        receivedObject = objectInput.readObject();
+                        System.out.println("Server response: " + receivedObject);
+                        break;
+                    case "chpd": // change account password
+                        objectOutput.writeObject(message);
+                        receivedObject = objectInput.readObject();
+                        System.out.println("Server response: " + receivedObject);
+                        break;
+                    case "crnt": // create note
+                        objectOutput.writeObject(message);
+                        receivedObject = objectInput.readObject();
+                        System.out.println("Server response: " + receivedObject);
+                        break;
+                    case "svnt":
+                        objectOutput.writeObject(message);
+                        receivedObject = objectInput.readObject();
+                        System.out.println("Server response: " + receivedObject);
+                        break;
+                    case "dlnt": // delete note
+                        objectOutput.writeObject(message);
+                        receivedObject = objectInput.readObject();
+                        System.out.println("Server response: " + receivedObject);
+                        break;
+                }
             }
-        }
-        catch(Exception ex){
-            System.out.println("Connection failed...");
-
-            System.out.println(ex);
-        }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
+}

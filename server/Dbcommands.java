@@ -1,15 +1,18 @@
 package server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
 import java.sql.*;
 import java.util.ArrayDeque;
 
-public class dbcommands {
+public class Dbcommands {
+    /*public static String GetNoteData(Statement statement, int NoteID){
+        try {
+            String SQLcommand = "SELECT * FROM tp_database.notes_link WHERE idnotes_list=" + Integer.toString(NoteID);
+            SQLcommand = "SELECT * FROM tp_database.notes_list WHERE idnotes_list=" + Integer.toString(NoteID);
+        }
+    }*/
 
-    public static void Search(Statement statement, int PersonID, ArrayDeque<String> ArrDe){
+
+    public static int Search(Statement statement, int PersonID, ArrayDeque<String> ArrDe){
         try {
             String SQLcommand = "SELECT * FROM tp_database.notes_link WHERE idaccount_list=" + Integer.toString(PersonID);
 
@@ -33,15 +36,16 @@ public class dbcommands {
                     ArrDe.add(note_data);
                 }
             }
+            return 0;
         }
         catch(Exception ex){
             System.out.println("Connection failed...");
-
             System.out.println(ex);
+            return -1;
         }
     }
 //tested-work
-    public static void Upload(Statement statement, int PersonID, String note_name, String note_data){
+    public static int Upload(Statement statement, int PersonID, String note_name, String note_data){
         try {
             String SQLcommand = "INSERT INTO notes_list (note_name, note_data) VALUES ('" + note_name + "', '" + note_data + "');";
             statement.executeUpdate(SQLcommand);
@@ -55,29 +59,43 @@ public class dbcommands {
             int id = tempSTR.getLast();
             SQLcommand = "INSERT INTO notes_link (idaccount_list, idnotes_list) VALUES (" + PersonID + " , " + id + ");";
             statement.executeUpdate(SQLcommand);
+            return 0;
         }
         catch(Exception ex){
             System.out.println("Connection failed...");
-
             System.out.println(ex);
+            return -1;
         }
     }
 //tested-work
-    public static void Delete(Statement statement, int PersonID, int NoteID){
-        try {
-            String SQLcommand = "DELETE FROM notes_link WHERE (idaccount_list=" + Integer.toString(PersonID) + " AND idnotes_list="+ Integer.toString(NoteID) +");";
+    public static int UpdateNote(Statement statement, int NoteID, String note_data){
+        try{
+            String SQLcommand = "UPDATE notes_list SET note_data = '" + note_data + "' WHERE idnotes_list=" + Integer.toString(NoteID);
             statement.executeUpdate(SQLcommand);
-
+            return 0;
         }
         catch(Exception ex){
             System.out.println("Connection failed...");
-
             System.out.println(ex);
+            return -1;
+        }
+    }
+    public static int Delete(Statement statement, int PersonID, int NoteID){
+        try {
+            String SQLcommand = "DELETE FROM notes_link WHERE (idaccount_list=" + Integer.toString(PersonID) + " AND idnotes_list="+ Integer.toString(NoteID) +");";
+            statement.executeUpdate(SQLcommand);
+            return 0;
+        }
+        catch(Exception ex){
+            System.out.println("Connection failed...");
+            System.out.println(ex);
+            return -1;
         }
     }
 //tested-work
     public static boolean Login(Statement statement, String Login, String Password) {
         try {
+            int id;
             boolean Proof = false;
             String SQLcommand = "SELECT * FROM tp_database.account_list WHERE (username='" + Login
                     + "' AND password='" + Password + "');";
@@ -117,4 +135,30 @@ public class dbcommands {
         }
     }
 //tested-work
+    public static int UsernameUpdate(Statement statement, int PersonID, String Newname){
+        try{
+            String SQLcommand = "UPDATE account_list SET username = '" + Newname + "' WHERE idaccount_list=" + Integer.toString(PersonID);
+            int result = statement.executeUpdate(SQLcommand);
+            return result;
+        }
+        catch(Exception ex){
+            System.out.println("Connection failed...");
+            System.out.println(ex);
+            return -1;
+        }
+    }
+
+    public static int UserpassUpdate(Statement statement, int PersionID, String Pass){
+        try{
+            String SQLcommand = "UPDATE account_list SET password = '" + Pass + "' WHERE idaccount_list=" + Integer.toString(PersionID);
+            int result = statement.executeUpdate(SQLcommand);
+            return result;
+        }
+        catch(Exception ex){
+            System.out.println("Connection failed...");
+            System.out.println(ex);
+            return -1;
+        }
+    }
+
 }

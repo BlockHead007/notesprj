@@ -9,7 +9,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class dbconnector implements Runnable {
+public class Dbconnector implements Runnable{
     private static final String url = "jdbc:mysql://26.230.233.234:3306/tp_database";
     private static final String username = "tpdb";
     private static final String password = "421-1Best";
@@ -18,22 +18,19 @@ public class dbconnector implements Runnable {
 
     private static Socket clientDialog;
 
-    public dbconnector(Socket client) {
-        dbconnector.clientDialog = client;
-    }
+    //public Dbconnector(Socket client) {        Dbconnector.clientDialog = client;
 
-    @Override
     public void run() {
 
         try {
 
             DataInputStream in = new DataInputStream(clientDialog.getInputStream());
             DataOutputStream out = new DataOutputStream(clientDialog.getOutputStream());
-            System.out.println("DataInputStream created\nDataOutputStream created");
+            //System.out.println("DataInputStream created\nDataOutputStream created");
             conn = DriverManager.getConnection(url, username, password);
             statement = conn.createStatement();
             System.out.println("Connected to DB");
-
+/*
             while (!clientDialog.isClosed()) {
                 System.out.println("Server reading from channel");
                 String entry = in.readUTF();
@@ -76,15 +73,17 @@ public class dbconnector implements Runnable {
 
             clientDialog.close();
 
-            System.out.println("Closing connections & channels - DONE.");
+            System.out.println("Closing connections & channels - DONE.");*/
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException trowables){
             trowables.printStackTrace();
             throw new RuntimeException();
-        } catch (InterruptedException e) {
+        } catch (NullPointerException ne) {
+            ne.printStackTrace();
+        }/* catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
+        }*/
     }
 }

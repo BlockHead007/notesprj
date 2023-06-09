@@ -1,9 +1,11 @@
-package client.Regic.src;
+package client.app.src;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import client.app.src.RoundedBorder;
 
 public class LoginScreen extends JFrame {
     private JFrame frame;
@@ -12,8 +14,9 @@ public class LoginScreen extends JFrame {
     private JTextField usernameField;
     private JLabel passwordLabel;
     private JPasswordField passwordField;
-    private JButton loginButton;
-    private JButton registrationButton;
+    public JButton loginButton;
+    public JButton registrationButton;
+    public String auth;
 
     public LoginScreen() {
         frame = new JFrame("Добро пожаловать!");
@@ -30,6 +33,7 @@ public class LoginScreen extends JFrame {
         usernameField = new JTextField();
         usernameLabel.setHorizontalAlignment(JLabel.CENTER);
         usernameField.setPreferredSize(new Dimension(200, 30));
+
 
         passwordLabel = new JLabel("Пароль:");
         passwordField = new JPasswordField();
@@ -56,14 +60,14 @@ public class LoginScreen extends JFrame {
             }
         });
 
-        int borderRadius = 10;
+        /*int borderRadius = 10;
         Border roundedBorder = new RoundedBorder(borderRadius);
         Border compoundBorder = BorderFactory.createCompoundBorder(roundedBorder, BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
         usernameField.setBorder(compoundBorder);
         passwordField.setBorder(compoundBorder);
         loginButton.setBorder(compoundBorder);
-        registrationButton.setBorder(compoundBorder);
+        registrationButton.setBorder(compoundBorder);*/
 
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -107,12 +111,10 @@ public class LoginScreen extends JFrame {
         frame.setResizable(false);
     }
 
-    private void login() {
+    public void login() {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
-
-        System.out.println("Логин: " + username);
-        System.out.println("Пароль: " + password);
+        auth = username + ":" + password;
     }
 
     private void openRegistrationScreen() {
@@ -120,12 +122,12 @@ public class LoginScreen extends JFrame {
         RegistrationScreen registrationScreen = new RegistrationScreen();
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 new LoginScreen();
             }
         });
-    }
+    }*/
 }

@@ -1,4 +1,6 @@
-package client.Regic.src;
+package client.app.src;
+import client.app.src.RoundedBorder;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -65,7 +67,7 @@ public class RegistrationScreen {
             }
         });
 
-        int borderRadius = 10;
+        /*int borderRadius = 10;
         Border roundedBorder = new RoundedBorder(borderRadius);
         Border compoundBorder = BorderFactory.createCompoundBorder(roundedBorder, BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
@@ -74,7 +76,7 @@ public class RegistrationScreen {
         passwordField.setBorder(compoundBorder);
         confirmPasswordField.setBorder(compoundBorder);
         registerButton.setBorder(compoundBorder);
-        existingAccountButton.setBorder(compoundBorder);
+        existingAccountButton.setBorder(compoundBorder);*/
 
         ComponentSizeSetter.setFixedSize(loginField, 200, 30);
         ComponentSizeSetter.setFixedSize(emailField, 200, 30);
@@ -148,10 +150,6 @@ public class RegistrationScreen {
 
         frame.dispose();
         LoginScreen loginScreen = new LoginScreen();
-
-        frame.dispose(); 
-        LoginScreen loginScreen = new LoginScreen();  
-        loginScreen.show();
 
     }
 

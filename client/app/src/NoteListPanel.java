@@ -1,4 +1,4 @@
-package client.Create.src;
+package client.app.src;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;

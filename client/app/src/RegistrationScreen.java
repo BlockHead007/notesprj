@@ -6,6 +6,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import client.app.src.Serverhandler;
 
 public class RegistrationScreen {
     private JFrame frame;
@@ -20,7 +21,7 @@ public class RegistrationScreen {
     private JPasswordField confirmPasswordField;
     private JButton registerButton;
     private JButton existingAccountButton;
-
+    private Serverhandler serverhandler = LoginScreen.serverhandler;
     public RegistrationScreen() {
         frame = new JFrame("Регистрация");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,8 +54,13 @@ public class RegistrationScreen {
         registerButton.setBackground(Color.GREEN);
         registerButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                register();
+            public void actionPerformed(ActionEvent e){
+                try{
+                    register();
+                }
+                catch (Exception ex){
+                    ex.printStackTrace();//
+                }
             }
         });
 
@@ -133,17 +139,45 @@ public class RegistrationScreen {
         frame.setVisible(true);
         frame.setResizable(false);
     }
-
-    private void register() {
+    int constate = -1;
+    private void register() throws Exception{
         String login = loginField.getText();
         String email = emailField.getText();
         String password = new String(passwordField.getPassword());
         String confirmPassword = new String(confirmPasswordField.getPassword());
+        if (!password.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(frame, "Пароли не совпадают. Пожалуйста, повторите ввод.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            passwordField.setText("");
+            confirmPasswordField.setText("");
+        } else {
+            if (serverhandler.s == null){
+                constate = serverhandler.newcon();
+            }
+            switch (constate) {
+                case -1:
+                    JOptionPane.showMessageDialog(frame, "Не удаётся подключиться к серверу.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    break;
+                case -2:
+                    System.out.println("Unknown error happened! Handler returned -2");
+                    break;
+                case 0:
+                    int state = serverhandler.registration(login, password, email);
+                    if (state == -1){
+                        JOptionPane.showMessageDialog(frame, "Пользователь с таким именем уже зарегестрирован!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    }
+                    else{
+                        serverhandler.id = state;
+                        JOptionPane.showMessageDialog(frame, "Регистрация прошла успешно!", "Успех", JOptionPane.INFORMATION_MESSAGE);
+                        openApp();
+                        break;
+                    }
+            }
+        }
+    }
 
-        System.out.println("Логин: " + login);
-        System.out.println("Email: " + email);
-        System.out.println("Пароль: " + password);
-        System.out.println("Подтверждение пароля: " + confirmPassword);
+    private void openApp() throws Exception {
+        frame.dispose();
+        NotesApplication notesApplication = new NotesApplication();
     }
 
     private void showLoginScreen() {
@@ -151,14 +185,5 @@ public class RegistrationScreen {
         frame.dispose();
         LoginScreen loginScreen = new LoginScreen();
 
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new RegistrationScreen();
-            }
-        });
     }
 }

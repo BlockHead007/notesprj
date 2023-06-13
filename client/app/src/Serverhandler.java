@@ -2,147 +2,144 @@ package client.app.src;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayDeque;
 
 public class Serverhandler {
+    public static Serverhandler serverhandler;
     public Socket s;
-    public void newcon(){
+    public int id;
+    public int index = -1;
+    public ArrayDeque<String> noteslist = null;
+    public String[] mass = new String[3];
+    private ObjectOutputStream objectOutput = null;
+    private ObjectInputStream objectInput = null;
+    private Object receiveObject;
+    public int newcon(){
         try {
-            // Создание сокета для подключения к серверу на localhost:1234
             s = new Socket("88.204.64.47", 20000);
-        } catch (IOException e) {
-            e.printStackTrace();
+            return 0;
+        } catch (ConnectException ce){
+            System.out.println("Can't connect to server!");
+            return -1;
+        } catch (SocketException se) {
+            System.out.println("Can't find server!");
+            return -1;
+        }
+        catch (IOException ie) {
+            ie.printStackTrace();
+            return -2;
         }
     }
-    public void auth(String user, String pass) throws Exception{
-        // Получение потоков ввода-вывода для обмена данными с сервером
-        ObjectOutputStream objectOutput = new ObjectOutputStream(s.getOutputStream());
-        ObjectInputStream objectInput = new ObjectInputStream(s.getInputStream());
-
-        // Отправка данных для авторизации
-        String message = "gets~" + user + "~" + pass;
+    public int auth(String user, String pass) throws Exception{
+        if (objectInput == null || objectOutput == null) {
+            objectOutput = new ObjectOutputStream(s.getOutputStream());
+            objectInput = new ObjectInputStream(s.getInputStream());
+        }
+        String message = "logs~" + user + "~" + pass;
         objectOutput.writeObject(message);
-        Object receiveObject = objectInput.readObject();
-        int id = (int) receiveObject;
+        receiveObject = objectInput.readObject();
+        int state = (int) receiveObject;
+        if (state<0) {
 
-        // Обработка результата
-
-        if (id==-1) {
-            //Ошибка на стороне сервера
-            //Вывести сообщение на экран
-            //Закрытие соединения с сервером
-            s.close();
-            return;
+            return state;
         }
+        else this.id = state;
+        return 0;
     }
-    public void registration(String user, String pass, String email) throws Exception{
-        ObjectOutputStream objectOutput = new ObjectOutputStream(s.getOutputStream());
-        ObjectInputStream objectInput = new ObjectInputStream(s.getInputStream());
-
-        // Отправка данных для авторизации
+    public int registration(String user, String pass, String email) throws Exception{
+        if (objectInput == null || objectOutput == null) {
+            objectOutput = new ObjectOutputStream(s.getOutputStream());
+            objectInput = new ObjectInputStream(s.getInputStream());
+        }
         String message = "regs~" + user + "~" + pass + "~" + email;
         objectOutput.writeObject(message);
-        Object receiveObject = objectInput.readObject();
-        int id = (int) receiveObject;
-
-        // Обработка результата
-
-        if (id==-1) {
-            //Ошибка на стороне сервера
-            //Вывести сообщение на экран
-            //Закрытие соединения с сервером
-            return;
-        }
-        s.close();
+        receiveObject = objectInput.readObject();
+        int state = (int) receiveObject;
+        return state;
     }
-    public void getnoteslist(int id) throws Exception{
-        ObjectOutputStream objectOutput = new ObjectOutputStream(s.getOutputStream());
-        ObjectInputStream objectInput = new ObjectInputStream(s.getInputStream());
-
-        // Отправка данных для авторизации
+    public int getnoteslist() throws Exception{
+        //noteslist = null;
+        if (objectInput == null || objectOutput == null) {
+            objectOutput = new ObjectOutputStream(s.getOutputStream());
+            objectInput = new ObjectInputStream(s.getInputStream());
+        }
         String message = "getd~" + id;
         objectOutput.writeObject(message);
-        Object receiveObject = objectInput.readObject();
+        receiveObject = objectInput.readObject();
+        int state = (int) receiveObject;
+        //objectInput.reset();
+        receiveObject = objectInput.readObject();
+        noteslist = (ArrayDeque<String>)receiveObject;
 
-        // Обработка результата
-
-        if (id==-1) {
-            //Ошибка на стороне сервера
-            //Вывести сообщение на экран
-            return;
-        }
+        for(String s : noteslist)
+            System.out.println(s);
+        return state;
     }
-    public void notecreate(int id, String note_name, String note_data) throws Exception{
-        ObjectOutputStream objectOutput = new ObjectOutputStream(s.getOutputStream());
-        ObjectInputStream objectInput = new ObjectInputStream(s.getInputStream());
-
+    public int notecreate(String note_name, String note_data) throws Exception{
+        if (objectInput == null || objectOutput == null) {
+            objectOutput = new ObjectOutputStream(s.getOutputStream());
+            objectInput = new ObjectInputStream(s.getInputStream());
+        }
         String message = "crnt~" + id + "~" + note_name + "~" + note_data;
         objectOutput.writeObject(message);
-        Object receiveObject = objectInput.readObject();
-        id = (int) receiveObject;
-
-        // Обработка результата
-
-        if (id==-1) {
-            //Ошибка на стороне сервера
-            //Вывести сообщение на экран
-            return;
-        }
+        receiveObject = objectInput.readObject();
+        int state = (int) receiveObject;
+        return state;
     }
-    public void noteupdate(int noteid, String note_data) throws Exception{
-        ObjectOutputStream objectOutput = new ObjectOutputStream(s.getOutputStream());
-        ObjectInputStream objectInput = new ObjectInputStream(s.getInputStream());
-
+    public int noteupdate(int noteid, String note_data) throws Exception{
+        if (objectInput == null || objectOutput == null) {
+            objectOutput = new ObjectOutputStream(s.getOutputStream());
+            objectInput = new ObjectInputStream(s.getInputStream());
+        }
         String message = "svnt~" + noteid + "~" + note_data;
         objectOutput.writeObject(message);
-        Object receiveObject = objectInput.readObject();
-        int ans = (int) receiveObject;
-
-        if (ans==-1) {
-            //Ошибка на стороне сервера
-            //Вывести сообщение на экран
-            return;
-        }
+        receiveObject = objectInput.readObject();
+        int state = (int) receiveObject;
+        return state;
     }
-    public void notedelete(int id, int noteid) throws Exception{
-        ObjectOutputStream objectOutput = new ObjectOutputStream(s.getOutputStream());
-        ObjectInputStream objectInput = new ObjectInputStream(s.getInputStream());
-
+    public int notenameupdate(int noteid, String note_name) throws Exception{
+        if (objectInput == null || objectOutput == null) {
+            objectOutput = new ObjectOutputStream(s.getOutputStream());
+            objectInput = new ObjectInputStream(s.getInputStream());
+        }
+        String message = "nmnt~" + noteid + "~" + note_name;
+        objectOutput.writeObject(message);
+        receiveObject = objectInput.readObject();
+        int state = (int) receiveObject;
+        return state;
+    }
+    public int notedelete(int noteid) throws Exception{
+        if (objectInput == null || objectOutput == null) {
+            objectOutput = new ObjectOutputStream(s.getOutputStream());
+            objectInput = new ObjectInputStream(s.getInputStream());
+        }
         String message = "dlnt~" + id + "~" + noteid;
         objectOutput.writeObject(message);
-        Object receiveObject = objectInput.readObject();
-        id = (int) receiveObject;
-        if (id==-1) {
-            //Ошибка на стороне сервера
-            //Вывести сообщение на экран
-            return;
-        }
-    }
-    public void chname(int id, String newname) throws Exception{
-        ObjectOutputStream objectOutput = new ObjectOutputStream(s.getOutputStream());
-        ObjectInputStream objectInput = new ObjectInputStream(s.getInputStream());
+        receiveObject = objectInput.readObject();
+        int state = (int) receiveObject;
+        return state;
 
+    }
+    public int chname(String newname) throws Exception{
+        if (objectInput == null || objectOutput == null) {
+            objectOutput = new ObjectOutputStream(s.getOutputStream());
+            objectInput = new ObjectInputStream(s.getInputStream());
+        }
         String message = "chan~" + id + "~" + newname;
         objectOutput.writeObject(message);
-        Object receiveObject = objectInput.readObject();
-        id = (int) receiveObject;
-        if (id==-1) {
-            //Ошибка на стороне сервера
-            //Вывести сообщение на экран
-            return;
-        }
+        receiveObject = objectInput.readObject();
+        int state = (int) receiveObject;
+        return state;
     }
-    public void chpass(int id, String newpass) throws Exception{
-        ObjectOutputStream objectOutput = new ObjectOutputStream(s.getOutputStream());
-        ObjectInputStream objectInput = new ObjectInputStream(s.getInputStream());
-
+    public int chpass(String newpass) throws Exception{
+        if (objectInput == null || objectOutput == null) {
+            objectOutput = new ObjectOutputStream(s.getOutputStream());
+            objectInput = new ObjectInputStream(s.getInputStream());
+        }
         String message = "chpd~" + id + "~" + newpass;
         objectOutput.writeObject(message);
-        Object receiveObject = objectInput.readObject();
-        id = (int) receiveObject;
-        if (id==-1) {
-            //Ошибка на стороне сервера
-            //Вывести сообщение на экран
-            return;
-        }
+        receiveObject = objectInput.readObject();
+        int state = (int) receiveObject;
+        return state;
     }
 }

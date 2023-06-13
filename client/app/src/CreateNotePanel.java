@@ -1,14 +1,19 @@
 package client.app.src;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class CreateNotePanel extends JPanel {
     private JTextArea noteTextArea;
     private JComboBox<String> fontSizeComboBox;
     private JComboBox<String> fontComboBox;
     private JButton saveButton;
+    public int note_id;
+    private Serverhandler serverhandler = LoginScreen.serverhandler;
+    private NotesApplication notesApplication = LoginScreen.notesApplication;
 
-    public CreateNotePanel() {
+    public CreateNotePanel(String note_id, String name, String text) {
         setLayout(new BorderLayout());
 
         JPanel inputPanel = new JPanel();
@@ -16,6 +21,7 @@ public class CreateNotePanel extends JPanel {
 
         noteTextArea = new JTextArea();
         noteTextArea.setBackground(Color.LIGHT_GRAY);
+        noteTextArea.setText(text);
 
         JPanel optionsPanel = new JPanel();
         optionsPanel.setLayout(new GridLayout(2, 2, 10, 10));
@@ -37,6 +43,29 @@ public class CreateNotePanel extends JPanel {
         saveButton.setFocusPainted(false);
         saveButton.setOpaque(true);
         saveButton.setUI(new RoundedCornerButtonUI(30, 30));
+        saveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String text = noteTextArea.getText();
+                if (note_id == "-1"){
+                    String note = JOptionPane.showInputDialog("Введите название заметки");
+                    if (note != "") {
+                    try{serverhandler.notecreate(note, text);
+                    notesApplication.showNoteListPanel();
+                }
+                catch (Exception ex){
+                    System.out.println("Strange thing is happening!");
+                }
+                    }
+                }
+                else{
+                    try{serverhandler.noteupdate(Integer.parseInt(note_id), text);
+                        notesApplication.showNoteListPanel();
+                    }
+                    catch (Exception ex){
+                        System.out.println("Strange thing is happening!");
+                }
+            }
+        }});
 
         buttonPanel.add(saveButton);
 

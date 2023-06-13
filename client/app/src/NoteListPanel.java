@@ -1,14 +1,26 @@
 package client.app.src;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NoteListPanel extends JPanel {
     private DefaultListModel<NotePanel> noteListModel;
-    private JList<NotePanel> noteList;
+    public JList<NotePanel> noteList;
+    public Map<NotePanel, String[]> noteContentMap;
+    private Serverhandler serverhandler = LoginScreen.serverhandler;
+    private NotesApplication notesApplication = LoginScreen.notesApplication;
+    private RoundButton deleteButton;
+    private RoundButton editButton;
+    private NotePanel panel;
 
     public NoteListPanel() {
+        panel = null;
+        noteList = null;
+        noteListModel = null;
+        noteContentMap = null;
         setLayout(new BorderLayout());
 
         noteListModel = new DefaultListModel<>();
@@ -18,99 +30,114 @@ public class NoteListPanel extends JPanel {
 
         add(scrollPane, BorderLayout.CENTER);
 
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        deleteButton = new RoundButton("Удалить");
+        deleteButton.setBackground(Color.GREEN);
+        deleteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deleteNote();
+            }
+        });
+
+        editButton = new RoundButton("Редактировать название");
+        editButton.setBackground(Color.GREEN);
+        editButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                editNote();
+            }
+        });
+        //notesApplication.showCreateNotePanel(notesApplication.mass[0], notesApplication.mass[1], notesApplication.mass[2]);
+
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        buttonPanel.add(deleteButton, gbc);
+        gbc.gridy++;
+        buttonPanel.add(editButton, gbc);
+
+        JPanel buttonWrapperPanel = new JPanel(new BorderLayout());
+        buttonWrapperPanel.add(buttonPanel, BorderLayout.SOUTH);
+        add(buttonWrapperPanel, BorderLayout.EAST);
+
         JLabel titleLabel = new JLabel("Ваши заметки");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         add(titleLabel, BorderLayout.NORTH);
+        noteContentMap = new HashMap<>();
+        try {
+            getlist();
+        }
+        catch (Exception ex){
+            System.out.println("Strange thing is happening!");
+            ex.printStackTrace();
+        }
     }
 
-    public void addNoteToList(String note) {
-        NotePanel panel = new NotePanel();
-        panel.setBackground(Color.LIGHT_GRAY);
+    public void addNoteToList(String note, String note_id, String note_text) {
+
+        panel = new NotePanel();
+        panel.setBackground(getBackground());
 
         JTextField textField = new JTextField(note);
         textField.setEditable(false);
         textField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        textField.setBackground(Color.LIGHT_GRAY);
+        textField.setBackground(getBackground());
         panel.add(textField, BorderLayout.CENTER);
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
-
-        JButton deleteButton = new JButton("Удалить");
-        deleteButton.addActionListener(e -> deleteNote());
-        deleteButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        deleteButton.setBackground(Color.GREEN);
-        deleteButton.setForeground(Color.BLACK);
-        deleteButton.setFocusPainted(false);
-        deleteButton.setOpaque(true);
-        deleteButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                deleteButton.setBackground(new Color(0, 150, 0)); // Darker shade of green on hover
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                deleteButton.setBackground(Color.GREEN);
-            }
-        });
-        deleteButton.setPreferredSize(new Dimension(100, 30)); // Adjust button size
-        deleteButton.setUI(new RoundedCornerButtonUI(30, 30)); // Apply rounded corner UI with arc width and height of 10
-
-
-        buttonPanel.add(deleteButton);
-
-        JButton editButton = new JButton("Редактировать");
-        editButton.addActionListener(e -> editNote());
-        editButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        editButton.setBackground(Color.GREEN);
-        editButton.setForeground(Color.BLACK);
-        editButton.setFocusPainted(false);
-        editButton.setOpaque(true);
-        editButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                editButton.setBackground(new Color(0, 150, 0)); // Darker shade of green on hover
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                editButton.setBackground(Color.GREEN);
-            }
-        });
-        editButton.setPreferredSize(new Dimension(120, 30)); // Adjust button size
-        editButton.setUI(new RoundedCornerButtonUI(30, 30)); // Apply rounded corner UI with arc width and height of 10
-
-
-        buttonPanel.add(editButton);
-
-        panel.add(buttonPanel, BorderLayout.EAST);
-
+        String temp_text[] = new String[3];
+        temp_text[0] = note_id;
+        temp_text[1] = note;
+        temp_text[2] = note_text;
         noteListModel.addElement(panel);
+        noteContentMap.put(panel, temp_text);
+    }
+
+    public void updateNoteContent(NotePanel panel, String content) {
+        String[] temp_text = noteContentMap.get(panel);
+        temp_text[1] = content;
+        noteContentMap.put(panel, temp_text);
+    }
+
+    /*public String getNoteContent(NotePanel panel) {
+        return noteContentMap.get(panel);
+    }*/
+
+    //public JList<NotePanel> getNoteList() {return noteList;}
+
+    private void deleteNote() { if (serverhandler.index != -1) {
+        int selectedIndex = noteList.getSelectedIndex();
+        if (selectedIndex != -1) {
+            try {
+                serverhandler.notedelete(Integer.parseInt(serverhandler.mass[0]));
+                serverhandler.index = -1;
+            } catch (Exception ex) {
+                System.out.println("Strange thing is happening!");
+            }
+        }
+    }
+    }
+
+    public void editNote() { if (serverhandler.index != -1) {
+        NotePanel panel = noteListModel.getElementAt(serverhandler.index);
+        JTextField textField = (JTextField) panel.getComponent(0);
+        String note = textField.getText();
+        String editedNote = JOptionPane.showInputDialog("Введите новое название заметки");
+        if (editedNote != null) {
+            try{serverhandler.notenameupdate(Integer.parseInt(serverhandler.mass[0]), editedNote);
+                serverhandler.index = -1;}
+            catch (Exception ex){
+                System.out.println("Strange thing is happening!");
+                ex.printStackTrace();
+            }
+        }
+    }
     }
 
     public JList<NotePanel> getNoteList() {
         return noteList;
-    }
-
-    private void deleteNote() {
-        int selectedIndex = noteList.getSelectedIndex();
-        if (selectedIndex != -1) {
-            noteListModel.remove(selectedIndex);
-        }
-    }
-
-    private void editNote() {
-        int selectedIndex = noteList.getSelectedIndex();
-        if (selectedIndex != -1) {
-            NotePanel panel = noteList.getSelectedValue();
-            JTextField textField = (JTextField) panel.getComponent(0);
-            String note = textField.getText();
-            String editedNote = JOptionPane.showInputDialog(panel, "Введите новый текст заметки", note);
-            if (editedNote != null) {
-                textField.setText(editedNote);
-            }
-        }
     }
 
     private static class NotePanel extends JPanel {
@@ -118,6 +145,10 @@ public class NoteListPanel extends JPanel {
         private static final int ARC_HEIGHT = 30;
 
         private JTextField textField;
+
+        public JTextField getTextField() {
+            return textField;
+        }
 
         public NotePanel() {
             setLayout(new BorderLayout());
@@ -127,10 +158,6 @@ public class NoteListPanel extends JPanel {
             textField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
             add(textField, BorderLayout.CENTER);
-        }
-
-        public void setNoteText(String text) {
-            textField.setText(text);
         }
 
         @Override
@@ -160,20 +187,23 @@ public class NoteListPanel extends JPanel {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Note List Panel");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            NoteListPanel noteListPanel = new NoteListPanel();
-            noteListPanel.addNoteToList("Первая заметка");
-            noteListPanel.addNoteToList("Вторая заметка");
-            noteListPanel.addNoteToList("Третья заметка");
-
-            frame.getContentPane().add(noteListPanel);
-            frame.setSize(800, 600);
-            frame.setVisible(true);
-            frame.setResizable(false);
-        });
+    public void getlist() throws Exception{
+            int temp_list = serverhandler.getnoteslist();
+            String id = "", name = "", text = "";
+            int temp = 0;
+            for(String s : serverhandler.noteslist){
+                if (temp == 3)
+                    temp = 0;
+                if (temp == 0)
+                    id = s;
+                if (temp == 1)
+                    name = s;
+                if (temp == 2) {
+                    text = s;
+                    addNoteToList(name, id, text);
+                    System.out.println("\nid: " + id + "\nname: " + name + "\ntext: " + text);
+                }
+                temp++;
+            }
     }
 }

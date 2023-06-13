@@ -17,11 +17,14 @@ public class NotesApplication {
     private JComboBox<String> fontSizeComboBox;
     private JComboBox<String> fontComboBox;
     private JButton saveButton;
+    private Serverhandler serverhandler = LoginScreen.serverhandler;
     private AccountPanel accountPanel;
     private NoteListPanel noteListPanel;
     private CreateNotePanel createNotePanel;
+    //public int index = -1;
+    //public String[] mass = new String[3];
 
-    public NotesApplication() {
+    public NotesApplication() throws Exception {
         frame = new JFrame("Заметки");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -49,7 +52,7 @@ public class NotesApplication {
         sidePanel.add(accountButton);
 
         accountPanel = new AccountPanel();
-        noteListPanel = new NoteListPanel();
+
 
         accountButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -59,11 +62,27 @@ public class NotesApplication {
 
         noteListButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                showNoteListPanel();
+                try {
+                    showNoteListPanel();
+                }
+                catch (Exception ex){
+                    System.out.println("Strange thing is happening!");
+                }
             }
         });
 
-        titleLabel = new JLabel("Заметки");
+        createNoteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showCreateNotePanel("-1", "", "");
+            }
+        });
+
+        try {showNoteListPanel();}
+        catch (Exception ex){
+            System.out.println("Strange thing is happening!");
+        }
+
+        /*titleLabel = new JLabel("Заметки");
         notesTextArea = new JTextArea();
         fontSizeComboBox = new JComboBox<>(new String[]{"12", "14", "16"});
         fontComboBox = new JComboBox<>(new String[]{"Arial", "Times New Roman", "Courier New"});
@@ -110,26 +129,13 @@ public class NotesApplication {
         buttonPanel.add(saveButton);
 
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));*/
 
         frame.getContentPane().add(sidePanel, BorderLayout.WEST);
-        frame.getContentPane().add(titleLabel, BorderLayout.NORTH);
-        frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
 
         frame.setSize(800, 600);
         frame.setVisible(true);
         frame.setResizable(false);
-
-        createNoteButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                showCreateNotePanel();
-            }
-        });
-    }
-
-    private void saveNote() {
-        String noteText = notesTextArea.getText();
-        System.out.println("Заметка сохранена: " + noteText);
     }
 
     private void showAccountPanel() {
@@ -140,30 +146,38 @@ public class NotesApplication {
         frame.repaint();
     }
 
-    private void showNoteListPanel() {
+    public void showNoteListPanel() throws Exception {
         noteListPanel = new NoteListPanel();
-        noteListPanel.addNoteToList("Первая заметка");
-        noteListPanel.addNoteToList("Вторая заметка");
-        noteListPanel.addNoteToList("Третья заметка");
-
+        frame.getContentPane().removeAll();
+        frame.getContentPane().add(noteListPanel);
+        frame.setSize(800, 600);
+        frame.setVisible(true);
+        frame.setResizable(false);
         noteListPanel.getNoteList().addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
+                //if (e.getClickCount() == 0) {serverhandler.index = -1;}
+                if (e.getClickCount() == 1) {
+                    serverhandler.index = noteListPanel.noteList.getSelectedIndex();
+                    try {getdata(serverhandler.index);}
+                    catch (Exception ex){
+                        System.out.println("Strange thing is happening!");
+                    }
+                }
                 if (e.getClickCount() == 2) {
-                    showCreateNotePanel();
+                    showCreateNotePanel(serverhandler.mass[0], serverhandler.mass[1], serverhandler.mass[2]);
                 }
             }
         });
 
-        frame.getContentPane().removeAll();
         frame.getContentPane().add(sidePanel, BorderLayout.WEST);
         frame.getContentPane().add(noteListPanel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
     }
 
-    private void showCreateNotePanel() {
-        createNotePanel = new CreateNotePanel();
-
+    public void showCreateNotePanel(String note_id, String name, String text) {
+        createNotePanel = new CreateNotePanel(note_id, name, text);
+/*
         JButton saveButton = createNotePanel.getSaveButton();
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -171,7 +185,7 @@ public class NotesApplication {
                 noteListPanel.addNoteToList(noteText);
                 showNoteListPanel();
             }
-        });
+        });*/
 
         frame.getContentPane().removeAll();
         frame.getContentPane().add(sidePanel, BorderLayout.WEST);
@@ -180,11 +194,36 @@ public class NotesApplication {
         frame.repaint();
     }
 
-    public static void main(String[] args) {
+    public void getdata(int index) throws Exception{
+        //int temp_list = serverhandler.getnoteslist();
+        int tin = 0;
+        int temp = 0;
+        for(String s : serverhandler.noteslist){
+            if (temp == 3){
+                temp = 0;
+                tin++;
+            }
+            if (temp == 0) {
+                if (tin == index) serverhandler.mass[0] = s;
+            }
+            if (temp == 1)
+                if (tin == index) serverhandler.mass[1] = s;
+            if (temp == 2) {
+                if (tin == index) serverhandler.mass[2] = s;
+            }
+            temp++;
+        }
+    }
+
+    /*public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new NotesApplication();
+                try {
+                    new NotesApplication();
+                } catch (Exception e) {
+                    System.out.println("Strange thing is happening!");
+                }
             }
         });
-    }
+    }*/
 }

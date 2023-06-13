@@ -4,6 +4,8 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
+import java.net.SocketException;
 
 import client.app.src.RoundedBorder;
 
@@ -16,8 +18,9 @@ public class LoginScreen extends JFrame {
     private JPasswordField passwordField;
     public JButton loginButton;
     public JButton registrationButton;
+    public static NotesApplication notesApplication;
     public String auth;
-
+    public static Serverhandler serverhandler = new Serverhandler();
     public LoginScreen() {
         frame = new JFrame("Добро пожаловать!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,7 +49,12 @@ public class LoginScreen extends JFrame {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                login();
+                try{
+                    login();
+                }
+                catch (Exception ex){
+                    ex.printStackTrace();//
+                }
             }
         });
 
@@ -110,24 +118,53 @@ public class LoginScreen extends JFrame {
         frame.setVisible(true);
         frame.setResizable(false);
     }
-
-    public void login() {
+    int constate = -1;
+    public void login() throws Exception{
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
-        auth = username + ":" + password;
+        if (serverhandler.s == null){
+        constate = serverhandler.newcon();
+        }
+        switch (constate) {
+            case -1:
+                JOptionPane.showMessageDialog(frame, "Не удаётся подключиться к серверу.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                break;
+            case -2:
+                System.out.println("Unknown error happened! Handler returned -2");
+                break;
+            case 0:
+                int ansstate = serverhandler.auth(username, password);
+                switch (ansstate) {
+                    case 0:
+                        openApp();
+                        break; //login success
+                    case -1:
+                        JOptionPane.showMessageDialog(frame, "Имя пользователя или пароль введены неверно.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case -2:
+                        JOptionPane.showMessageDialog(frame, "Произошла ошибка на стороне сервера. Подробности в консоли.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                        break;
+                }
+        }
     }
+
 
     private void openRegistrationScreen() {
         frame.dispose();
         RegistrationScreen registrationScreen = new RegistrationScreen();
     }
 
-    /*public static void main(String[] args) {
+    private void openApp() throws Exception {
+        frame.dispose();
+        this.notesApplication = new NotesApplication();
+    }
+
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 new LoginScreen();
             }
         });
-    }*/
+    }
 }

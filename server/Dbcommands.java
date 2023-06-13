@@ -2,7 +2,6 @@ package server;
 
 import java.sql.*;
 import java.util.ArrayDeque;
-
 public class Dbcommands {
     /*public static String GetNoteData(Statement statement, int NoteID){
         try {
@@ -80,6 +79,18 @@ public class Dbcommands {
             return -1;
         }
     }
+    public static int UpdateNoteName(Statement statement, int NoteID, String note_name){
+        try{
+            String SQLcommand = "UPDATE notes_list SET note_name = '" + note_name + "' WHERE idnotes_list=" + Integer.toString(NoteID);
+            statement.executeUpdate(SQLcommand);
+            return 0;
+        }
+        catch(Exception ex){
+            System.out.println("Connection failed...");
+            System.out.println(ex);
+            return -1;
+        }
+    }
     public static int Delete(Statement statement, int PersonID, int NoteID){
         try {
             String SQLcommand = "DELETE FROM notes_link WHERE (idaccount_list=" + Integer.toString(PersonID) + " AND idnotes_list="+ Integer.toString(NoteID) +");";
@@ -93,7 +104,7 @@ public class Dbcommands {
         }
     }
 //tested-work
-    public static Integer Login(Statement statement, String Login, String Password) {
+    public static int Login(Statement statement, String Login, String Password) {
         try {
             boolean Proof = false;int ID = -1;
             String SQLcommand = "SELECT * FROM tp_database.account_list WHERE (username='" + Login
@@ -117,7 +128,7 @@ public class Dbcommands {
             System.out.println("Connection failed...");
 
             System.out.println(ex);
-            return -1;
+            return -2;
         }
     }
 //tested-work
